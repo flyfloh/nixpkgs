@@ -6701,6 +6701,8 @@ in {
 
   pony = callPackage ../development/python-modules/pony { };
 
+  rxv     = callPackage ../development/python-modules/rxv     { };
+
 });
 
 in fix' (extends overrides packages)
