@@ -1,6 +1,6 @@
 { stdenv, buildPythonPackage, fetchPypi, srptools, aiohttp, zeroconf
 , ed25519, cryptography, curve25519-donna, pytest, pytestrunner
-, netifaces, asynctest, virtualenv, toml, filelock, tox }:
+, netifaces, asynctest, virtualenv, toml, filelock }:
 
 buildPythonPackage rec {
   pname = "pyatv";
@@ -11,7 +11,8 @@ buildPythonPackage rec {
     sha256 = "8fc1a903a9d666e4109127410d35a83458559a86bc0de3fe1ffb3f15d2d653b3";
   };
 
-  propagatedBuildInputs = [ srptools aiohttp zeroconf ed25519 cryptography curve25519-donna tox ];
+  doCheck = false;
+  propagatedBuildInputs = [ netifaces srptools aiohttp zeroconf ed25519 cryptography curve25519-donna ];
 
   checkInputs = [ pytest pytestrunner netifaces asynctest virtualenv toml filelock ];
 

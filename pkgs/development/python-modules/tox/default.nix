@@ -1,6 +1,7 @@
 { lib
 , buildPythonPackage
 , fetchPypi
+, importlib-metadata
 , packaging
 , pluggy
 , py
@@ -16,7 +17,7 @@ buildPythonPackage rec {
   version = "3.14.3";
 
   buildInputs = [ setuptools_scm ];
-  propagatedBuildInputs = [ packaging pluggy py six virtualenv toml filelock ];
+  propagatedBuildInputs = [ importlib-metadata packaging pluggy py six virtualenv toml filelock ];
 
   doCheck = false;
 
