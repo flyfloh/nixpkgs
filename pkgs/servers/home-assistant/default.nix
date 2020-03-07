@@ -24,7 +24,7 @@ let
 
     # used by check_config script
     # can be unpinned once https://github.com/home-assistant/home-assistant/issues/11917 is resolved
-    (mkOverride "colorlog" "4.0.2"
+    (mkOverride "colorlog" "4.1.0"
       "3cf31b25cbc8f86ec01fef582ef3b840950dea414084ed19ab922c8b493f9b42")
 
     # required by aioesphomeapi
