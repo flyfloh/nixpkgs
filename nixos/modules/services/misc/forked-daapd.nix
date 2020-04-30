@@ -63,10 +63,10 @@ let
       adjust_period_seconds = ${ builtins.toString cfg.audio.adjustPeriodSeconds }
     }
 
-    airplay_shared {
-      control_port = ${ builtins.toString cfg.airplay.controlPort }
-      timing_port = ${ builtins.toString cfg.airplay.timingPort }
-    }
+    # airplay_shared {
+    #   control_port = ${ builtins.toString cfg.airplay.controlPort }
+    #   timing_port = ${ builtins.toString cfg.airplay.timingPort }
+    # }
 
     streaming {
       sample_rate = ${ builtins.toString cfg.streaming.sampleRate }
