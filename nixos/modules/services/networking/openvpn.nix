@@ -6,9 +6,16 @@ let
 
   cfg = config.services.openvpn;
 
-  inherit (pkgs) openvpn;
+  usePkcs11 = builtins.any (i: i != null) (lib.attrsets.collect (x: x ? pkcs11id) cfg.servers);
 
-  makeOpenVPNJob = cfg: name:
+  package = if usePkcs11 then (pkgs.openvpn.override { pkcs11Support = true; })
+            else pkgs.openvpn;
+
+  additionalPackages = if usePkcs11 then with pkgs; [ opensc libp11 pkcs11helper p11-kit ] else [];
+  systemPackageList = [ package ] ++ additionalPackages;
+  udevPackageList = if usePkcs11 then [ pkgs.libu2f-host pkgs.yubikey-personalization ] else [];
+
+  makeOpenVPNJob = cfg: name: usePkcs11:
     let
 
       path = (getAttr "openvpn-${name}" config.systemd.services).path;
@@ -55,6 +62,17 @@ let
                 ${cfg.authUserPass.username}
                 ${cfg.authUserPass.password}
               ''}"}
+          ${optionalString usePkcs11 ''
+              pkcs11-providers ${pkgs.opensc}/lib/opensc-pkcs11.so
+              pkcs11-id '${cfg.pkcs11id}'
+              pkcs11-pin-cache 300
+              daemon
+              auth-retry nointeract
+              management-hold
+              management-signal
+              management 127.0.0.1 8888
+              management-query-passwords
+          ''}
         '';
 
     in {
@@ -65,7 +83,7 @@ let
 
       path = [ pkgs.iptables pkgs.iproute pkgs.nettools ];
 
-      serviceConfig.ExecStart = "@${openvpn}/sbin/openvpn openvpn --suppress-timestamps --config ${configFile}";
+      serviceConfig.ExecStart = "@${package}/sbin/openvpn openvpn --suppress-timestamps --config ${configFile}";
       serviceConfig.Restart = "always";
       serviceConfig.Type = "notify";
     };
@@ -172,6 +190,14 @@ in
             '';
           };
 
+          pkcs11id = mkOption {
+            type = types.nullOr types.str;
+            default = null;
+            description = ''
+              PIV id to use.
+            '';
+          };
+
           authUserPass = mkOption {
             default = null;
             description = ''
@@ -208,9 +234,12 @@ in
 
   config = mkIf (cfg.servers != {}) {
 
-    systemd.services = listToAttrs (mapAttrsFlatten (name: value: nameValuePair "openvpn-${name}" (makeOpenVPNJob value name)) cfg.servers);
+    systemd.services = listToAttrs (mapAttrsFlatten (name: value: nameValuePair "openvpn-${name}" (makeOpenVPNJob value name usePkcs11)) cfg.servers);
 
-    environment.systemPackages = [ openvpn ];
+    environment.systemPackages = systemPackageList;
+
+    services.pcscd.enable = usePkcs11;
+    services.udev.packages = udevPackageList;
 
     boot.kernelModules = [ "tun" ];
 
