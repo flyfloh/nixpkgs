@@ -6,7 +6,8 @@ let
 
   cfg = config.services.openvpn;
 
-  usePkcs11 = builtins.any (i: i != null) (lib.attrsets.collect (x: x ? pkcs11id) cfg.servers);
+  usePkcs11 = false;
+  #usePkcs11 = builtins.any (i: i != null) (lib.attrsets.collect (x: x ? pkcs11id) cfg.servers);
 
   package = if usePkcs11 then (pkgs.openvpn.override { pkcs11Support = true; })
             else pkgs.openvpn;
