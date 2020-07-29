@@ -2168,6 +2168,8 @@ in
 
   mq-cli = callPackage ../tools/system/mq-cli { };
 
+  netbox = callPackage ../applications/networking/netbox { };
+
   nfdump = callPackage ../tools/networking/nfdump { };
 
   nfstrace = callPackage ../tools/networking/nfstrace { };
