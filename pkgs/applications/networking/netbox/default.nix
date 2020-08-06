@@ -43,16 +43,18 @@ svgwrite
     sha256 = "099wyr1xp69q87n5j2as4aaf146b0jqij3vv4bpq9m5278gk9wp0";
   };
 
-  buildPhase = ''
-    ${python3.interpreter} netbox/manage.py createsuperuser
-    ${python3.interpreter} netbox/manage.py collectstatic --no-input
-  '';
+  # buildPhase = ''
+  #   ${python3.interpreter} netbox/manage.py createsuperuser
+  #   ${python3.interpreter} netbox/manage.py collectstatic --no-input
+  # '';
 
+  dontBuild = true;
   dontInstall = true;
-  doCheck = false;
+  #doCheck = false;
 
 
   checkPhase = ''
+    python netbox/manage.py test netbox/
   '';
 
   meta = with lib; {
