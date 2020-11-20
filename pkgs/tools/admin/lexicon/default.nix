@@ -1,44 +1,20 @@
 { lib
-, python3
+, python3Packages
 , fetchFromGitHub
 }:
 
-let
-  py = python3.override {
-    packageOverrides = self: super: {
-      # until https://github.com/ags-slc/localzone/issues/1 gets resolved
-      dnspython = super.dnspython.overridePythonAttrs(oldAttrs: rec {
-        pname = "dnspython";
-        version = "1.16.0";
-        # since name is defined from the previous derivation, need to override
-        # name explicity for correct version to show in drvName
-        name = "${pname}-${version}";
-
-        src = super.fetchPypi {
-          inherit pname version;
-          extension = "zip";
-          sha256 = "00cfamn97w2vhq3id87f10mjna8ag5yz5dw0cy5s0sa3ipiyii9n";
-        };
-      });
-
-      localzone = super.localzone.overridePythonAttrs(oldAttrs: rec {
-        meta = oldAttrs.meta // { broken = false; };
-      });
-    };
-  };
-in
-  with py.pkgs;
+with python3Packages;
 
 buildPythonApplication rec {
   pname = "lexicon";
-  version = "3.4.3";
+  version = "3.5.1";
   format = "pyproject";
 
   src = fetchFromGitHub {
     owner = "AnalogJ";
     repo = pname;
     rev = "v${version}";
-    sha256 = "1ym4gj4xyd69rsc5niilvcb72gys22rjxhj4qd574vyx3ryl34za";
+    sha256 = "1if2aj727jc0bx1rib3fsaqa31pqlc2xc0v3nl9862al61p0svd5";
   };
 
   nativeBuildInputs = [
@@ -46,18 +22,46 @@ buildPythonApplication rec {
   ];
 
   propagatedBuildInputs = [
+    appdirs
+    attrs
     beautifulsoup4
     boto3
+    botocore
+    cached-property
+    certifi
+    cffi
+    chardet
+    click
     cryptography
+    defusedxml
     dnspython
+    filelock
     future
+    idna
+    isodate
+    jmespath
     localzone
+    lxml
+    #prompt-toolkit
+    ptable
+    pycparser
+    pygments
     pynamecheap
+    python-dateutil
+    pytz
     pyyaml
     requests
+    requests-file
+    requests-toolbelt
+    s3transfer
+    six
     softlayer
+    soupsieve
+    suds-jurko
     tldextract
     transip
+    urllib3
+    wcwidth
     xmltodict
     zeep
   ];
