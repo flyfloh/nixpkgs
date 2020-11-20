@@ -1,18 +1,20 @@
-{ lib, fetchPypi, buildPythonPackage, setuptools_scm
-, requests, requests-file, idna, pytest
+{ lib, fetchPypi, buildPythonPackage, pythonOlder, setuptools_scm
+, filelock, requests, requests-file, idna, pytest
 , responses
 }:
 
 buildPythonPackage rec {
   pname   = "tldextract";
-  version = "2.2.3";
+  version = "3.0.2";
+
+  disabled = pythonOlder "3.0";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "ab0e38977a129c72729476d5f8c85a8e1f8e49e9202e1db8dca76e95da7be9a8";
+    sha256 = "f188eab8c90ff935f3fa49d9228049cd7f37fb47105c3f15f8e6dd6f6e25924a";
   };
 
-  propagatedBuildInputs = [ requests requests-file idna ];
+  propagatedBuildInputs = [ filelock requests requests-file idna ];
   checkInputs = [ pytest responses ];
   nativeBuildInputs = [ setuptools_scm ];
 
